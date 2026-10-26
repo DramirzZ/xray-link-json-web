@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xray Link JSON Converter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f1117; --surface: #1a1d27; --surface2: #242836; --border: #2e3345;
+      --text: #e6e8f0; --muted: #9aa0b4; --accent: #6c8cff; --accent-hover: #8aa4ff;
+      --success: #3dd68c; --danger: #ff6b6b; --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Vazirmatn", system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.4rem; }
+    header p { color: var(--muted); font-size: 0.95rem; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.25rem; }
+    label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--muted); margin-bottom: 0.5rem; }
+    textarea {
+      width: 100%; min-height: 160px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 0.82rem; padding: 0.9rem 1rem; resize: vertical; direction: ltr; text-align: left; line-height: 1.5;
+    }
+    textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,140,255,0.15); }
+    .actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1rem 0; }
+    button { font-family: inherit; font-size: 0.9rem; font-weight: 600; padding: 0.65rem 1.2rem; border-radius: 8px; border: none; cursor: pointer; }
+    button:active { transform: scale(0.98); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--border); }
+    .status { font-size: 0.85rem; min-height: 1.4em; margin-top: 0.5rem; }
+    .status.ok { color: var(--success); }
+    .status.err { color: var(--danger); }
+    .hint { font-size: 0.8rem; color: var(--muted); margin-top: 0.75rem; line-height: 1.5; }
+    footer { text-align: center; margin-top: 2.5rem; font-size: 0.8rem; color: var(--muted); }
+    footer a { color: var(--accent); text-decoration: none; }
+    @media (max-width: 600px) { header h1 { font-size: 1.4rem; } .actions { flex-direction: column; } button { width: 100%; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 id="title">Xray Link JSON</h1>
+      <p id="subtitle"></p>
+    </header>
+    <div class="card">
+      <label id="lblInput" for="input"></label>
+      <textarea id="input" placeholder="vless://..."></textarea>
+      <div class="actions">
+        <button class="btn-primary" id="btnConvert"></button>
+        <button class="btn-secondary" id="btnClear"></button>
+        <button class="btn-secondary" id="btnCopy"></button>
+        <button class="btn-secondary" id="btnSample"></button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+    <div class="card">
+      <label id="lblOutput" for="output"></label>
+      <textarea id="output" readonly></textarea>
+      <p class="hint" id="hint"></p>
+    </div>
+    <footer id="footer"></footer>
+  </div>
+  <script>
+    document.getElementById("title").textContent = "Xray Link \u2194 JSON";
+    document.getElementById("subtitle").textContent = "\u062a\u0628\u062f\u06cc\u0644 \u062f\u0648\u0637\u0631\u0641\u0647 \u0644\u06cc\u0646\u06a9\u200c\u0647\u0627\u06cc share \u0648 \u06a9\u0627\u0646\u0641\u06cc\u06af JSON (\u0633\u0628\u06a9 \u0648 \u0628\u062f\u0648\u0646 \u0633\u0631\u0648\u0631)";
+    document.getElementById("lblInput").textContent = "\u0648\u0631\u0648\u062f\u06cc (\u0644\u06cc\u0646\u06a9 \u06cc\u0627 JSON)";
+    document.getElementById("lblOutput").textContent = "\u062e\u0631\u0648\u062c\u06cc";
+    document.getElementById("btnConvert").textContent = "\u062a\u0628\u062f\u06cc\u0644";
+    document.getElementById("btnClear").textContent = "\u067e\u0627\u06a9 \u06a9\u0631\u062f\u0646";
+    document.getElementById("btnCopy").textContent = "\u06a9\u067e\u06cc \u062e\u0631\u0648\u062c\u06cc";
+    document.getElementById("btnSample").textContent = "\u0646\u0645\u0648\u0646\u0647";
+    document.getElementById("hint").innerHTML = "\u067e\u0634\u062a\u06cc\u0628\u0627\u0646\u06cc: <strong>vless</strong> \u00b7 <strong>vmess</strong> \u00b7 <strong>trojan</strong> \u00b7 <strong>ss</strong> \u00b7 <strong>socks5</strong> \u2014 \u0627\u062c\u0631\u0627 \u0641\u0642\u0637 \u062f\u0631 \u0645\u0631\u0648\u0631\u06af\u0631";
+    document.getElementById("footer").innerHTML = '\u0627\u0644\u0647\u0627\u0645 \u0627\u0632 <a href="https://github.com/NightMachinery/Xray-Link-Json" target="_blank" rel="noopener">Xray-Link-Json</a>';
+  </script>
+  <script src="converter.js"></script>
+</body>
+</html>
